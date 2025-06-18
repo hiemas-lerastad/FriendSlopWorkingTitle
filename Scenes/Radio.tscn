@@ -1,0 +1,89 @@
+[gd_scene load_steps=15 format=3 uid="uid://bfbo52ja45trm"]
+
+[ext_resource type="Material" uid="uid://jg8biux0yggr" path="res://Assets/Materials/Radio/SpectrogramScreen.tres" id="1_mkopq"]
+[ext_resource type="Script" uid="uid://be6by06rcalrw" path="res://Scripts/Radio.gd" id="1_ncr3o"]
+[ext_resource type="Material" uid="uid://ckndhhuexsa7j" path="res://Assets/Materials/Radio/OscilloscopeScreen.tres" id="2_ncr3o"]
+[ext_resource type="Gradient" uid="uid://dh0cm6q8rn5jy" path="res://Assets/Resources/Gradients/SpectrogramVisualGradient2.tres" id="2_wquc3"]
+[ext_resource type="Gradient" uid="uid://cpfe7ava6cco6" path="res://Assets/Resources/Gradients/SpectrogramVisualGradient1.tres" id="3_oa4le"]
+[ext_resource type="ArrayMesh" uid="uid://comtjkfmxev05" path="res://Assets/Meshes/Radio.res" id="5_wquc3"]
+[ext_resource type="Material" uid="uid://bl0f07ep3r53s" path="res://Assets/Materials/Radio/StengthIndicator.tres" id="6_7f87o"]
+[ext_resource type="AnimationLibrary" uid="uid://bncvxfeu6ceoc" path="res://Assets/Animations/Radio.tres" id="6_wquc3"]
+
+[sub_resource type="Skin" id="Skin_oa4le"]
+resource_name = "Skin"
+bind_count = 2
+bind/0/name = &"Bone"
+bind/0/bone = -1
+bind/0/pose = Transform3D(1, 0, 0, 0, 1, -1.19209e-07, 0, 0, 1, 0, 0.200183, 0)
+bind/1/name = &"Bone.001"
+bind/1/bone = -1
+bind/1/pose = Transform3D(1, 0, 0, 0, 1, -1.19209e-07, 0, 0, 1, -0.065547, -0.0219891, -0.140712)
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_oa4le"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7f87o"]
+animation = &"Radio/Idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_kn1w1"]
+animation = &"Radio/MaxFrequency"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_j1pi8"]
+graph_offset = Vector2(-495.063, -9.22683)
+nodes/Frequency/node = SubResource("AnimationNodeBlend2_oa4le")
+nodes/Frequency/position = Vector2(100, 120)
+nodes/RadioIdle/node = SubResource("AnimationNodeAnimation_7f87o")
+nodes/RadioIdle/position = Vector2(-120, 60)
+nodes/RadioMax/node = SubResource("AnimationNodeAnimation_kn1w1")
+nodes/RadioMax/position = Vector2(-180, 240)
+node_connections = [&"Frequency", 0, &"RadioIdle", &"Frequency", 1, &"RadioMax", &"output", 0, &"Frequency"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_7f87o"]
+properties/0/path = NodePath("AnimationTree:parameters/Frequency/blend_amount")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[node name="Radio" type="Node3D" node_paths=PackedStringArray("mesh", "animation_tree")]
+script = ExtResource("1_ncr3o")
+mesh = NodePath("Armature/Skeleton3D/RadioBody")
+gradient_strength = ExtResource("3_oa4le")
+gradient_spectrogram = ExtResource("2_wquc3")
+animation_tree = NodePath("AnimationTree")
+oscilloscope_material = ExtResource("2_ncr3o")
+spectrogram_material = ExtResource("1_mkopq")
+strength_indicator_material = ExtResource("6_7f87o")
+
+[node name="Armature" type="Node3D" parent="."]
+
+[node name="Skeleton3D" type="Skeleton3D" parent="Armature"]
+bones/0/name = "Bone"
+bones/0/parent = -1
+bones/0/rest = Transform3D(1, 0, 0, 0, 1, 5.96046e-08, 0, -5.96046e-08, 1, 0, -0.200183, 0)
+bones/0/enabled = true
+bones/0/position = Vector3(0, -0.200183, 0)
+bones/0/rotation = Quaternion(-2.98023e-08, 0, 0, 1)
+bones/0/scale = Vector3(1, 1, 1)
+bones/1/name = "Bone.001"
+bones/1/parent = -1
+bones/1/rest = Transform3D(1, 0, 0, 0, 1, 5.96046e-08, 0, -5.96046e-08, 1, 0.065547, 0.0219891, 0.140712)
+bones/1/enabled = true
+bones/1/position = Vector3(0.065547, 0.0219891, 0.140712)
+bones/1/rotation = Quaternion(-2.98023e-08, 0, 0, 1)
+bones/1/scale = Vector3(1, 1, 1)
+
+[node name="RadioBody" type="MeshInstance3D" parent="Armature/Skeleton3D"]
+cast_shadow = 0
+mesh = ExtResource("5_wquc3")
+skin = SubResource("Skin_oa4le")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"Radio": ExtResource("6_wquc3")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeBlendTree_j1pi8")
+anim_player = NodePath("../AnimationPlayer")
+parameters/Frequency/blend_amount = 0.0
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_7f87o")

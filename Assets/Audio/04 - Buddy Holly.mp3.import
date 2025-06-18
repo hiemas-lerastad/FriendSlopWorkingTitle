@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bilue8m1kwcld"
+path="res://.godot/imported/04 - Buddy Holly.mp3-ad36172e437f31653ed831004a6c1c9e.mp3str"
+
+[deps]
+
+source_file="res://Assets/Audio/04 - Buddy Holly.mp3"
+dest_files=["res://.godot/imported/04 - Buddy Holly.mp3-ad36172e437f31653ed831004a6c1c9e.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

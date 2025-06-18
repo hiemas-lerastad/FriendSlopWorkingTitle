@@ -1,0 +1,29 @@
+[gd_resource type="AnimationLibrary" load_steps=3 format=3 uid="uid://bncvxfeu6ceoc"]
+
+[sub_resource type="Animation" id="Animation_1te6m"]
+resource_name = "Idle"
+length = 0.001
+tracks/0/type = "position_3d"
+tracks/0/imported = true
+tracks/0/enabled = true
+tracks/0/path = NodePath("Armature/Skeleton3D:Bone.001")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.065547, 0.0219891, 0.140712)
+
+[sub_resource type="Animation" id="Animation_uyyxj"]
+resource_name = "MaxFrequency"
+length = 0.001
+tracks/0/type = "position_3d"
+tracks/0/imported = true
+tracks/0/enabled = true
+tracks/0/path = NodePath("Armature/Skeleton3D:Bone.001")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.065547, 0.021989, -0.141813)
+
+[resource]
+_data = {
+&"Idle": SubResource("Animation_1te6m"),
+&"MaxFrequency": SubResource("Animation_uyyxj")
+}

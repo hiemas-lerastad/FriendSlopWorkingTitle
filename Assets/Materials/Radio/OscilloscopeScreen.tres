@@ -1,0 +1,25 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://ckndhhuexsa7j"]
+
+[ext_resource type="Shader" uid="uid://c2l17qf2igco7" path="res://Assets/Shaders/OscilloscopeScreen.gdshader" id="1_l1emo"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_l1emo")
+shader_parameter/albedo = Color(0, 0, 0, 1)
+shader_parameter/point_size = 0.0
+shader_parameter/roughness = 0.0
+shader_parameter/metallic_texture_channel = Vector4(0, 0, 0, 0)
+shader_parameter/specular = 0.0
+shader_parameter/metallic = 0.0
+shader_parameter/uv1_scale = Vector3(1, 1, 1)
+shader_parameter/uv1_offset = Vector3(0, 0, 0)
+shader_parameter/uv2_scale = Vector3(0, 0, 0)
+shader_parameter/uv2_offset = Vector3(0, 0, 0)
+shader_parameter/FOV = 75.0
+shader_parameter/foreground = false
+shader_parameter/frequency = 25.0
+shader_parameter/amplitude = 0.5
+shader_parameter/velocity = 5.0
+shader_parameter/tightness = 20.0
+shader_parameter/quality_signal = true
+shader_parameter/wave_color = Color(0, 1, 0, 1)

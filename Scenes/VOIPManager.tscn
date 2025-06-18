@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://vtknsoe72ndb"]
+
+[ext_resource type="Script" uid="uid://hu18mh3mw7bi" path="res://Scripts/VOIPManager.gd" id="1_mm615"]
+
+[node name="Voip Manager" type="Node" node_paths=PackedStringArray("input")]
+script = ExtResource("1_mm615")
+input = NodePath("AudioStreamPlayer3D")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+bus = &"Record"
