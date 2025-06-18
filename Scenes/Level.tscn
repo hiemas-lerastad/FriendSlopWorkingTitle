@@ -3,10 +3,10 @@
 [ext_resource type="Script" uid="uid://c3wp5sh4g4clv" path="res://Scripts/Level.gd" id="1_fuudy"]
 [ext_resource type="PackedScene" uid="uid://dj1428bukr0d6" path="res://Scenes/Player.tscn" id="1_r150o"]
 [ext_resource type="AudioStream" uid="uid://bilue8m1kwcld" path="res://Assets/Audio/04 - Buddy Holly.mp3" id="2_kln2b"]
-[ext_resource type="Script" uid="uid://cv4mmolom1qpu" path="res://Scripts/SpatialAudioTransmitter.gd" id="3_rgh2o"]
 [ext_resource type="Script" uid="uid://b62c6m0w62bpf" path="res://Scripts/MaterialProperties.gd" id="3_xylue"]
 [ext_resource type="Gradient" uid="uid://d1pogkyd5j8gl" path="res://Assets/Resources/Gradients/SpectrogramFrequencyGradient.tres" id="4_rgh2o"]
 [ext_resource type="Script" uid="uid://006ex5ya7l71" path="res://Scripts/SpatialValueTransmitter.gd" id="6_tj5wv"]
+[ext_resource type="Script" uid="uid://eyssufbg62hn" path="res://Scripts/SpatialAudioTransmitter.gd" id="7_ienac"]
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_r150o"]
 
@@ -83,17 +83,16 @@ metadata/_custom_type_script = "uid://006ex5ya7l71"
 
 [node name="SpatialAudioTransmitter" type="AudioStreamPlayer3D" parent="MeshInstance3D" groups=["Signal Transmitter", "Transmitter"]]
 stream = ExtResource("2_kln2b")
-volume_db = -10.0
 autoplay = true
-max_distance = 20.0
 bus = &"Radio"
-script = ExtResource("3_rgh2o")
+script = ExtResource("7_ienac")
+transmitting = true
+range_partial = 15.0
+range_full = 10.0
 smooth_occlusion = true
 use_frequency = true
 frequency_map = ExtResource("4_rgh2o")
-range_partial = 10.0
-range_full = 5.0
-metadata/_custom_type_script = "uid://cv4mmolom1qpu"
+metadata/_custom_type_script = "uid://eyssufbg62hn"
 
 [node name="Online Entities" type="Node" parent="."]
 

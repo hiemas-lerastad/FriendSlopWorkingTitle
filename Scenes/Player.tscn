@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bfbo52ja45trm" path="res://Scenes/Radio.tscn" id="2_kyqiw"]
 [ext_resource type="Script" uid="uid://bnseld6uo4gui" path="res://Scripts/RadiationReciever.gd" id="3_gntrk"]
 [ext_resource type="PackedScene" uid="uid://vtknsoe72ndb" path="res://Scenes/VOIPManager.tscn" id="4_dewec"]
-[ext_resource type="Script" uid="uid://cv4mmolom1qpu" path="res://Scripts/SpatialAudioTransmitter.gd" id="5_5ixxa"]
+[ext_resource type="Script" uid="uid://eyssufbg62hn" path="res://Scripts/SpatialAudioTransmitter.gd" id="5_5ixxa"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_qbkls"]
 
@@ -21,7 +21,7 @@ properties/2/path = NodePath("Pivot:rotation")
 properties/2/spawn = true
 properties/2/replication_mode = 1
 
-[sub_resource type="AudioStreamGenerator" id="AudioStreamGenerator_nn08x"]
+[sub_resource type="AudioStreamGenerator" id="AudioStreamGenerator_5ixxa"]
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("pivot", "held_item", "camera", "voip_manager")]
 collision_layer = 2
@@ -57,10 +57,11 @@ metadata/_custom_type_script = "uid://bnseld6uo4gui"
 output = NodePath("../SpatialAudioTransmitter")
 
 [node name="SpatialAudioTransmitter" type="AudioStreamPlayer3D" parent="." groups=["Transmitter"]]
-stream = SubResource("AudioStreamGenerator_nn08x")
-volume_db = 5.0
+stream = SubResource("AudioStreamGenerator_5ixxa")
 autoplay = true
-max_distance = 30.0
 script = ExtResource("5_5ixxa")
+transmitting = true
+range_partial = 20.0
+range_full = 15.0
 smooth_occlusion = true
-metadata/_custom_type_script = "uid://cv4mmolom1qpu"
+metadata/_custom_type_script = "uid://eyssufbg62hn"

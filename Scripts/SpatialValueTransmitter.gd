@@ -64,6 +64,9 @@ func _physics_process(delta) -> void:
 		else:
 			output_value = (frequency_value) * (1.0 - occlusion_amount * occlusion_multiplier);
 
+		if not target or is_nan(output_value):
+			output_value = 0.0;
+
 		value = output_value;
 
 		if not use_frequency:
@@ -261,11 +264,13 @@ func get_circle_points(tip: Vector3, center: Vector3, radius: float) -> Array[Ve
 
 func get_signal_strength(frequency: float) -> float:
 	if target:
-		var freq_strength: float = frequency_map.sample(frequency).a;
+		var freq_strength: float;
 		var distance = global_position.distance_to(target.global_position);
 		
 		if not use_frequency:
 			freq_strength = 1.0;
+		else:
+			freq_strength = frequency_map.sample(frequency).a;
 
 		if is_in_range():
 			distance = clampf(distance, range_full, range_partial);
