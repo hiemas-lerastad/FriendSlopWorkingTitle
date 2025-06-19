@@ -5,7 +5,6 @@ extends Node3D;
 @export var target: Node3D;
 
 @export_subgroup("Settings")
-@export var exclusions: Array[Node3D] = [];
 @export var frame_update_spacing: int = 5;
 @export var frame_update_offset: int = 0;
 @export var transmitting: bool = false;
@@ -23,6 +22,8 @@ extends Node3D;
 @export var default_occlusion_value: float = 1.0;
 @export var occlusion_property: String = "occlusion";
 @export var simple_occlusion: bool = false;
+@export var exclusions: Array[Node3D] = [];
+@export_flags_3d_physics var collision_mask: int = 1;
 
 @export_subgroup("Smoothing")
 @export var smooth_occlusion: bool = false;
@@ -138,6 +139,7 @@ func update_occlusion() -> void:
 		var space_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state;
 		var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(global_position, target.global_position);
 		query.exclude = [target];
+		query.collision_mask = collision_mask;
 		var collision: Dictionary = space_state.intersect_ray(query);
 
 		if collision:

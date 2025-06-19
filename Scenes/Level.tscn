@@ -72,16 +72,12 @@ skeleton = NodePath("")
 [node name="Transmitter Test" type="Node3D" parent="MeshInstance3D" node_paths=PackedStringArray("audio_player") groups=["Signal Transmitter", "Transmitter"]]
 script = ExtResource("6_tj5wv")
 transmitting = true
-range_full = 10.0
+range_full = 5.0
 range_partial = 15.0
-unlimited_distance = true
 audio_transmitter = true
 audio_player = NodePath("SpatialAudioTransmitter")
-simple_occlusion = true
 smooth_occlusion = true
-use_frequency = true
 frequency_map = ExtResource("4_rgh2o")
-disable_debug_markers = false
 metadata/_custom_type_script = "uid://006ex5ya7l71"
 
 [node name="SpatialAudioTransmitter" type="AudioStreamPlayer3D" parent="MeshInstance3D/Transmitter Test"]
