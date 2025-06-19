@@ -70,4 +70,3 @@ metadata/_custom_type_script = "uid://006ex5ya7l71"
 stream = SubResource("AudioStreamGenerator_5ixxa")
 volume_db = 5.0
 autoplay = true
-bus = &"Radio"
