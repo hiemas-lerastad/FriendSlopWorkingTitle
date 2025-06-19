@@ -4,7 +4,7 @@
 
 [node name="Voip Manager" type="Node" node_paths=PackedStringArray("input")]
 script = ExtResource("1_mm615")
-input = NodePath("AudioStreamPlayer3D")
+input = NodePath("Audio Stream Microphone")
 
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+[node name="Audio Stream Microphone" type="AudioStreamPlayer3D" parent="."]
 bus = &"Record"

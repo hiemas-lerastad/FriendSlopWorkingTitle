@@ -12,16 +12,16 @@ var peer: ENetMultiplayerPeer = ENetMultiplayerPeer.new();
 func _on_host_pressed() -> void:
 	peer.create_server(int(host_port.text));
 	multiplayer.multiplayer_peer = peer;
-	
+
 	multiplayer.peer_connected.connect(
 		func(pid) -> void:
 			print(str(pid) + " has connected");
 	);
-	
+
 	server_created.emit();
-	
+
 func _on_join_pressed() -> void:
 	peer.create_client(host_ip.text, int(host_port.text));
 	multiplayer.multiplayer_peer = peer;
-	
+
 	server_joined.emit();

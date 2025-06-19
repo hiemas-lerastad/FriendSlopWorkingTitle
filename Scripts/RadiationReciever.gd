@@ -8,7 +8,7 @@ func _physics_process(_delta: float) -> void:
 	accumulated_radiation -= radiation_dissapation_rate;
 
 	for transmitter in get_tree().get_nodes_in_group("Radiation Transmitter"):
-		if transmitter is SpatialValueTransmitter:
+		if transmitter is SpatialTransmitter:
 			accumulated_radiation += transmitter.value;
 
 	accumulated_radiation = clampf(accumulated_radiation, 0, 10000000);

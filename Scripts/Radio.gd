@@ -98,7 +98,7 @@ func update(delta):
 
 func find_signals():
 	for sig in get_tree().get_nodes_in_group("Signal Transmitter"):
-		if sig is SpatialAudioTransmitter:
+		if sig is SpatialTransmitter:
 			if sig.use_frequency:
 				var signal_strength = sig.get_signal_strength(frequency);
 				reciever_signal_strength += signal_strength * (1.0 - (sig.occlusion_amount * sig.occlusion_multiplier));

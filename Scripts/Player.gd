@@ -11,7 +11,7 @@ const JUMP_VELOCITY = 4.5;
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(int(str(name)));
-	
+
 	if voip_manager:
 		voip_manager.set_multiplayer_authority(int(str(name)));
 
@@ -19,10 +19,10 @@ func _ready() -> void:
 	if is_multiplayer_authority():
 		for sig in get_tree().get_nodes_in_group("Transmitter"):
 			sig.target = self;
-		
+
 		camera.set_multiplayer_authority(int(str(name)));
 		camera.current = true;
-		
+
 		if held_item:
 			held_item.set_multiplayer_authority(int(str(name)));
 	else:
@@ -31,7 +31,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if !is_multiplayer_authority():
 		return;
-		
+
 	for sig in get_tree().get_nodes_in_group("Transmitter"):
 		if not sig.target:
 			sig.target = self;

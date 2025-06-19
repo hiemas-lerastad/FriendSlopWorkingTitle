@@ -16,22 +16,24 @@ func _ready() -> void:
 	if is_multiplayer_authority():
 		input.stream = AudioStreamMicrophone.new();
 		input.play();
-		
+
 		idx = AudioServer.get_bus_index("Record");
 		effect = AudioServer.get_bus_effect(idx, 0);
-	else:
-		output.play()
-		playback = output.get_stream_playback();
+
+	output.play()
+	playback = output.get_stream_playback();
 
 func _process(_delta: float) -> void:
 	if not is_multiplayer_authority(): return;
 
-	if effect.can_get_buffer(buffer_size):
+	buffer_size = effect.get_frames_available()
+
+	if effect.can_get_buffer(buffer_size) and playback.can_push_buffer(buffer_size):
 		send_data.rpc(effect.get_buffer(buffer_size));
 
 	effect.clear_buffer();
 	
 @rpc("any_peer", "call_remote", "reliable")
 func send_data(data : PackedVector2Array):
-	for i in range(0, buffer_size):
+	for i in range(0, data.size()):
 		playback.push_frame(data[i]);

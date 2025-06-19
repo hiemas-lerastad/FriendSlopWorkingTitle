@@ -1,4 +1,4 @@
-class_name SpatialValueTransmitter;
+class_name SpatialTransmitter;
 extends Node3D;
 
 @export_subgroup("Nodes")
@@ -6,11 +6,21 @@ extends Node3D;
 
 @export_subgroup("Settings")
 @export var exclusions: Array[Node3D] = [];
-@export var default_occlusion_value: float = 1.0;
 @export var frame_update_spacing: int = 5;
 @export var frame_update_offset: int = 0;
 @export var transmitting: bool = false;
 @export var base_value: float = 1.0;
+@export_range(0.0, 10000.0, 0.1) var range_full : float;
+@export_range(0.0, 10000.0, 0.1) var range_partial : float;
+@export var unlimited_distance: bool = false;
+
+@export_subgroup("Audio")
+@export var audio_transmitter: bool = false;
+@export var audio_player: AudioStreamPlayer3D;
+
+@export_subgroup("Occlusion")
+@export var occlusion_enabled: bool = true;
+@export var default_occlusion_value: float = 1.0;
 @export var occlusion_property: String = "occlusion";
 
 @export_subgroup("Smoothing")
@@ -20,8 +30,6 @@ extends Node3D;
 @export_subgroup("Signal")
 @export var use_frequency: bool = false;
 @export var frequency_map: Gradient;
-@export_range(0.0, 10000.0, 0.1) var range_partial : float;
-@export_range(0.0, 10000.0, 0.1) var range_full : float;
 
 @export_subgroup("Debug")
 @export var active_color: Color = ProjectSettings.get_setting("debug/shapes/collision/shape_color");
@@ -44,6 +52,9 @@ var time: float = 0.0;
 
 func _ready() -> void:
 	debug = is_debug();
+	
+	if audio_transmitter and audio_player:
+		base_value = audio_player.volume_linear;
 
 func _process(_delta: float) -> void:
 	if debug and debug_draw_calls.size():
@@ -54,25 +65,28 @@ func _physics_process(delta) -> void:
 	if Engine.get_physics_frames() % frame_update_spacing == frame_update_offset:
 		if debug:
 			debug_draw_calls = [];
-			
-		var output_value: float;
+
+		var output_value: float = 0.0;
 		if smooth_occlusion:
 			if time < smoothing_duration:
 				time += delta * frame_update_spacing;
-				output_value = lerpf(value, (frequency_value) * (1.0 - occlusion_amount * occlusion_multiplier), time / smoothing_duration);
 
+				output_value = lerpf(value, frequency_value * (1.0 - occlusion_amount * occlusion_multiplier), time / smoothing_duration);
 		else:
-			output_value = (frequency_value) * (1.0 - occlusion_amount * occlusion_multiplier);
+			output_value = frequency_value * (1.0 - occlusion_amount * occlusion_multiplier);
 
 		if not target or is_nan(output_value):
 			output_value = 0.0;
 
 		value = output_value;
 
+		if audio_transmitter and audio_player:
+			audio_player.volume_linear = clampf(output_value, 0.0, 1.0);
+
 		if not use_frequency:
 			update_strength(get_signal_strength(1.0));
 
-		if debug and not disable_range_markers and target:
+		if debug and not disable_range_markers and target and not unlimited_distance:
 			var distance: float = global_position.distance_to(target.global_position);
 
 			if distance > range_partial:
@@ -119,7 +133,7 @@ func _physics_process(delta) -> void:
 				})
 
 func update_occlusion() -> void:
-	if target and transmitting and is_in_range(target.global_position):
+	if target and transmitting and is_in_range(target.global_position) and occlusion_enabled:
 		var space_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state;
 		var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(global_position, target.global_position);
 		query.exclude = [target];
@@ -210,9 +224,9 @@ func update_occlusion() -> void:
 					'point_one': global_position,
 					'point_two': target.global_position,
 					'color': active_color
-				})
+				});
 
-		time = 0.0;
+	time = 0.0;
 
 func is_debug() -> bool:
 	return (Engine.is_editor_hint() or get_tree().debug_collisions_hint) and not disable_debug_markers and Debug;
@@ -220,6 +234,9 @@ func is_debug() -> bool:
 func is_in_range(pos: Variant = null) -> bool:
 	if not target:
 		return false;
+	
+	if unlimited_distance:
+		return true;
 	
 	if not pos or not pos is Vector3:
 		pos = target.global_position;
@@ -271,6 +288,9 @@ func get_signal_strength(frequency: float) -> float:
 			freq_strength = 1.0;
 		else:
 			freq_strength = frequency_map.sample(frequency).a;
+
+		if unlimited_distance:
+			return freq_strength;
 
 		if is_in_range():
 			distance = clampf(distance, range_full, range_partial);

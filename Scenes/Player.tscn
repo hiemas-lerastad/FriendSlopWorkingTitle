@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bfbo52ja45trm" path="res://Scenes/Radio.tscn" id="2_kyqiw"]
 [ext_resource type="Script" uid="uid://bnseld6uo4gui" path="res://Scripts/RadiationReciever.gd" id="3_gntrk"]
 [ext_resource type="PackedScene" uid="uid://vtknsoe72ndb" path="res://Scenes/VOIPManager.tscn" id="4_dewec"]
-[ext_resource type="Script" uid="uid://eyssufbg62hn" path="res://Scripts/SpatialAudioTransmitter.gd" id="5_5ixxa"]
+[ext_resource type="Script" uid="uid://006ex5ya7l71" path="res://Scripts/SpatialTransmitter.gd" id="5_5ixxa"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_qbkls"]
 
@@ -54,14 +54,20 @@ script = ExtResource("3_gntrk")
 metadata/_custom_type_script = "uid://bnseld6uo4gui"
 
 [node name="Voip Manager" parent="." node_paths=PackedStringArray("output") instance=ExtResource("4_dewec")]
-output = NodePath("../SpatialAudioTransmitter")
+output = NodePath("../SpatialTransmitter/AudioStreamPlayer3D")
 
-[node name="SpatialAudioTransmitter" type="AudioStreamPlayer3D" parent="." groups=["Transmitter"]]
-stream = SubResource("AudioStreamGenerator_5ixxa")
-autoplay = true
+[node name="SpatialTransmitter" type="Node3D" parent="." node_paths=PackedStringArray("audio_player") groups=["Transmitter"]]
 script = ExtResource("5_5ixxa")
 transmitting = true
-range_partial = 20.0
 range_full = 15.0
+range_partial = 20.0
+audio_transmitter = true
+audio_player = NodePath("AudioStreamPlayer3D")
 smooth_occlusion = true
-metadata/_custom_type_script = "uid://eyssufbg62hn"
+metadata/_custom_type_script = "uid://006ex5ya7l71"
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="SpatialTransmitter"]
+stream = SubResource("AudioStreamGenerator_5ixxa")
+volume_db = 5.0
+autoplay = true
+bus = &"Radio"

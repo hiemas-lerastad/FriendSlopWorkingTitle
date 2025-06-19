@@ -1,12 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://b4ofk7wqck4a2"]
+[gd_scene load_steps=14 format=3 uid="uid://b4ofk7wqck4a2"]
 
 [ext_resource type="Script" uid="uid://c3wp5sh4g4clv" path="res://Scripts/Level.gd" id="1_fuudy"]
 [ext_resource type="PackedScene" uid="uid://dj1428bukr0d6" path="res://Scenes/Player.tscn" id="1_r150o"]
 [ext_resource type="AudioStream" uid="uid://bilue8m1kwcld" path="res://Assets/Audio/04 - Buddy Holly.mp3" id="2_kln2b"]
 [ext_resource type="Script" uid="uid://b62c6m0w62bpf" path="res://Scripts/MaterialProperties.gd" id="3_xylue"]
 [ext_resource type="Gradient" uid="uid://d1pogkyd5j8gl" path="res://Assets/Resources/Gradients/SpectrogramFrequencyGradient.tres" id="4_rgh2o"]
-[ext_resource type="Script" uid="uid://006ex5ya7l71" path="res://Scripts/SpatialValueTransmitter.gd" id="6_tj5wv"]
-[ext_resource type="Script" uid="uid://eyssufbg62hn" path="res://Scripts/SpatialAudioTransmitter.gd" id="7_ienac"]
+[ext_resource type="Script" uid="uid://006ex5ya7l71" path="res://Scripts/SpatialTransmitter.gd" id="6_tj5wv"]
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_r150o"]
 
@@ -70,29 +69,26 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.77669, 1.62636, 0)
 mesh = SubResource("CapsuleMesh_kln2b")
 skeleton = NodePath("")
 
-[node name="Radiation Source Test" type="Node3D" parent="MeshInstance3D" groups=["Radiation Transmitter", "Transmitter"]]
+[node name="Transmitter Test" type="Node3D" parent="MeshInstance3D" node_paths=PackedStringArray("audio_player") groups=["Signal Transmitter", "Transmitter"]]
 script = ExtResource("6_tj5wv")
 transmitting = true
-base_value = 0.1
-occlusion_property = "radiation"
-smooth_occlusion = true
-frequency_map = ExtResource("4_rgh2o")
-range_partial = 10.0
-range_full = 5.0
-metadata/_custom_type_script = "uid://006ex5ya7l71"
-
-[node name="SpatialAudioTransmitter" type="AudioStreamPlayer3D" parent="MeshInstance3D" groups=["Signal Transmitter", "Transmitter"]]
-stream = ExtResource("2_kln2b")
-autoplay = true
-bus = &"Radio"
-script = ExtResource("7_ienac")
-transmitting = true
-range_partial = 15.0
 range_full = 10.0
+range_partial = 15.0
+unlimited_distance = true
+audio_transmitter = true
+audio_player = NodePath("SpatialAudioTransmitter")
+occlusion_enabled = false
 smooth_occlusion = true
 use_frequency = true
 frequency_map = ExtResource("4_rgh2o")
-metadata/_custom_type_script = "uid://eyssufbg62hn"
+disable_debug_markers = false
+metadata/_custom_type_script = "uid://006ex5ya7l71"
+
+[node name="SpatialAudioTransmitter" type="AudioStreamPlayer3D" parent="MeshInstance3D/Transmitter Test"]
+stream = ExtResource("2_kln2b")
+attenuation_model = 3
+autoplay = true
+bus = &"Radio"
 
 [node name="Online Entities" type="Node" parent="."]
 
