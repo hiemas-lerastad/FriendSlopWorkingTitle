@@ -22,6 +22,7 @@ extends Node3D;
 @export var occlusion_enabled: bool = true;
 @export var default_occlusion_value: float = 1.0;
 @export var occlusion_property: String = "occlusion";
+@export var simple_occlusion: bool = false;
 
 @export_subgroup("Smoothing")
 @export var smooth_occlusion: bool = false;
@@ -162,58 +163,59 @@ func update_occlusion() -> void:
 			var path_found: bool = false;
 			var distances: Array = [1.0, 2.0, 3.0, 4.0];
 
-			for index in distances.size():
-				var distance: float = distances[index];
-				var cone_points: Array[Vector3] = get_circle_points(global_position, target.global_position, distance);
+			if not simple_occlusion:
+				for index in distances.size():
+					var distance: float = distances[index];
+					var cone_points: Array[Vector3] = get_circle_points(global_position, target.global_position, distance);
 
-				for point in cone_points:
-					query.to = point;
-					var radial_collision: Dictionary = space_state.intersect_ray(query);
+					for point in cone_points:
+						query.to = point;
+						var radial_collision: Dictionary = space_state.intersect_ray(query);
 
-					if radial_collision:
-						if debug and not disable_occlusion_markers:
-							debug_draw_calls.append({
-								'function_call': 'draw_line',
-								'point_one': global_position,
-								'point_two': point,
-								'color': inactive_color
-							})
-					else:
-						if debug and not disable_occlusion_markers:
-							debug_draw_calls.append({
-								'function_call': 'draw_line',
-								'point_one': global_position,
-								'point_two': point,
-								'color': active_color
-							})
-						query.from = point;
-						query.to = target.global_position;
-		
-						var inwards_collision: Dictionary = space_state.intersect_ray(query);
-						query.from = global_position;
-						
-						if not inwards_collision:
+						if radial_collision:
 							if debug and not disable_occlusion_markers:
+								debug_draw_calls.append({
+									'function_call': 'draw_line',
+									'point_one': global_position,
+									'point_two': point,
+									'color': inactive_color
+								})
+						else:
+							if debug and not disable_occlusion_markers:
+								debug_draw_calls.append({
+									'function_call': 'draw_line',
+									'point_one': global_position,
+									'point_two': point,
+									'color': active_color
+								})
+							query.from = point;
+							query.to = target.global_position;
+			
+							var inwards_collision: Dictionary = space_state.intersect_ray(query);
+							query.from = global_position;
+							
+							if not inwards_collision:
+								if debug and not disable_occlusion_markers:
+									debug_draw_calls.append({
+										'function_call': 'draw_line',
+										'point_one': point,
+										'point_two': target.global_position,
+										'color': active_color
+									})
+
+								occlusion_multiplier = (1.0 / (distances.size() + 1)) * (index + 1);
+								path_found = true;
+								break;
+							elif debug and not disable_occlusion_markers:
 								debug_draw_calls.append({
 									'function_call': 'draw_line',
 									'point_one': point,
 									'point_two': target.global_position,
-									'color': active_color
+									'color': inactive_color
 								})
 
-							occlusion_multiplier = (1.0 / (distances.size() + 1)) * (index + 1);
-							path_found = true;
-							break;
-						elif debug and not disable_occlusion_markers:
-							debug_draw_calls.append({
-								'function_call': 'draw_line',
-								'point_one': point,
-								'point_two': target.global_position,
-								'color': inactive_color
-							})
-
-				if path_found:
-					break;
+					if path_found:
+						break;
 
 		else:
 			occlusion_multiplier = 0.0;
