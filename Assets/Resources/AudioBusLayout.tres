@@ -1,6 +1,6 @@
-[gd_resource type="AudioBusLayout" load_steps=6 format=3 uid="uid://djk1ivq1y0wk8"]
+[gd_resource type="AudioBusLayout" load_steps=8 format=3 uid="uid://djk1ivq1y0wk8"]
 
-[sub_resource type="AudioEffectSpectrumAnalyzer" id="AudioEffectSpectrumAnalyzer_0h134"]
+[sub_resource type="AudioEffectSpectrumAnalyzer" id="AudioEffectSpectrumAnalyzer_fcpht"]
 resource_name = "SpectrumAnalyzer"
 
 [sub_resource type="AudioEffectEQ10" id="AudioEffectEQ10_le1gx"]
@@ -18,21 +18,28 @@ db = 1
 
 [sub_resource type="AudioEffectCompressor" id="AudioEffectCompressor_51eok"]
 resource_name = "Compressor"
+gain = 7.6
 mix = 0.5
-sidechain = &"RadioStatic"
+
+[sub_resource type="AudioEffectCapture" id="AudioEffectCapture_rc6cn"]
+resource_name = "Capture"
+
+[sub_resource type="AudioEffectSpectrumAnalyzer" id="AudioEffectSpectrumAnalyzer_0h134"]
+resource_name = "SpectrumAnalyzer"
 
 [sub_resource type="AudioEffectCapture" id="AudioEffectCapture_7ukxr"]
 resource_name = "Capture"
 
 [resource]
 bus/0/volume_db = -5.04224
-bus/1/name = &"Radio"
+bus/0/send = &"Radio Input"
+bus/1/name = &"Radio Effects"
 bus/1/solo = false
 bus/1/mute = false
 bus/1/bypass_fx = false
 bus/1/volume_db = -2.51026
-bus/1/send = &"Master"
-bus/1/effect/0/effect = SubResource("AudioEffectSpectrumAnalyzer_0h134")
+bus/1/send = &"Radio Input"
+bus/1/effect/0/effect = SubResource("AudioEffectSpectrumAnalyzer_fcpht")
 bus/1/effect/0/enabled = true
 bus/1/effect/1/effect = SubResource("AudioEffectEQ10_le1gx")
 bus/1/effect/1/enabled = true
@@ -40,11 +47,41 @@ bus/1/effect/2/effect = SubResource("AudioEffectBandPassFilter_abbfc")
 bus/1/effect/2/enabled = true
 bus/1/effect/3/effect = SubResource("AudioEffectCompressor_51eok")
 bus/1/effect/3/enabled = true
-bus/2/name = &"Record"
+bus/2/name = &"Radio Output"
 bus/2/solo = false
-bus/2/mute = true
+bus/2/mute = false
 bus/2/bypass_fx = false
-bus/2/volume_db = 0.0
-bus/2/send = &"Master"
-bus/2/effect/0/effect = SubResource("AudioEffectCapture_7ukxr")
+bus/2/volume_db = -2.51026
+bus/2/send = &"Radio Input"
+bus/2/effect/0/effect = SubResource("AudioEffectSpectrumAnalyzer_fcpht")
 bus/2/effect/0/enabled = true
+bus/2/effect/1/effect = SubResource("AudioEffectEQ10_le1gx")
+bus/2/effect/1/enabled = true
+bus/2/effect/2/effect = SubResource("AudioEffectBandPassFilter_abbfc")
+bus/2/effect/2/enabled = true
+bus/2/effect/3/effect = SubResource("AudioEffectCompressor_51eok")
+bus/2/effect/3/enabled = true
+bus/3/name = &"Radio Input"
+bus/3/solo = false
+bus/3/mute = false
+bus/3/bypass_fx = false
+bus/3/volume_db = -2.51026
+bus/3/send = &"Radio Effects"
+bus/3/effect/0/effect = SubResource("AudioEffectCapture_rc6cn")
+bus/3/effect/0/enabled = true
+bus/3/effect/1/effect = SubResource("AudioEffectSpectrumAnalyzer_0h134")
+bus/3/effect/1/enabled = false
+bus/3/effect/2/effect = SubResource("AudioEffectEQ10_le1gx")
+bus/3/effect/2/enabled = false
+bus/3/effect/3/effect = SubResource("AudioEffectBandPassFilter_abbfc")
+bus/3/effect/3/enabled = false
+bus/3/effect/4/effect = SubResource("AudioEffectCompressor_51eok")
+bus/3/effect/4/enabled = false
+bus/4/name = &"Record"
+bus/4/solo = false
+bus/4/mute = true
+bus/4/bypass_fx = false
+bus/4/volume_db = 0.0
+bus/4/send = &"Master"
+bus/4/effect/0/effect = SubResource("AudioEffectCapture_7ukxr")
+bus/4/effect/0/enabled = true
