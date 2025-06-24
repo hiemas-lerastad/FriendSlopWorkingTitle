@@ -1,9 +1,16 @@
 class_name Radio;
 extends Node3D;
 
+@export_group("Settings")
 @export var desired_frequency: float = 0.1;
 @export var static_stream: AudioStream;
 @export_range(-20.0, 0.0, 1.0) var static_volume: float = -20.0;
+@export var transmitting: bool = false;
+
+@export_group("Nodes")
+@export var voice_output: SpatialTransmitter;
+@export var peer_output: SpatialTransmitter;
+@export var peer_recorder: VOIPManager;
 
 @export_group("Visuals")
 @export var mesh: MeshInstance3D;
@@ -11,7 +18,7 @@ extends Node3D;
 @export var gradient_spectrogram: Gradient;
 @export var animation_tree: AnimationTree;
 
-@export_subgroup("Materials")
+@export_group("Materials")
 @export var oscilloscope_material: ShaderMaterial;
 @export var spectrogram_material: ShaderMaterial;
 @export var strength_indicator_material: ShaderMaterial;
@@ -36,14 +43,19 @@ func _ready() -> void:
 
 	make_unique();
 
-	radio_bus_listener = AudioServer.get_bus_effect_instance(1,0);
+	var radio_bus_id: int = AudioServer.get_bus_index("Radio Effects");
+	
+	if not is_multiplayer_authority():
+		radio_bus_id = AudioServer.get_bus_index("Radio Output");
+	
+	radio_bus_listener = AudioServer.get_bus_effect_instance(radio_bus_id, 0);
 
-	static_player = AudioStreamPlayer.new();
-	static_player.bus = "RadioStatic";
-	static_player.stream = static_stream;
-	static_player.volume_db = static_volume;
-	add_child(static_player);
-	static_player.play();
+	#static_player = AudioStreamPlayer.new();
+	#static_player.bus = "RadioStatic";
+	#static_player.stream = static_stream;
+	#static_player.volume_db = static_volume;
+	#add_child(static_player);
+	#static_player.play();
 	
 	spectrogram_img.fill(gradient_spectrogram.sample(0.0));
 
@@ -77,13 +89,27 @@ func make_unique() -> void:
 
 func input_update(event):
 	if is_multiplayer_authority():
-		if frequency < 0.999 and event.is_action_pressed("tune_up"):
+		if frequency < 0.999 and event.is_action_pressed("device_tune_up"):
 			desired_frequency += 0.01
 
-		if frequency > 0.001 and event.is_action_pressed("tune_down"):
+		if frequency > 0.001 and event.is_action_pressed("device_tune_down"):
 			desired_frequency -= 0.01
 
 		desired_frequency = clamp(desired_frequency, 0.0, 1.0)
+		
+		if event.is_action_pressed("device_state_toggle"):
+			#transmitting = !transmitting;
+			#print(multiplayer.get_unique_id())
+			#print(transmitting)
+			#voice_output.transmitting = transmitting;
+			
+			update_transmitting_state.rpc(!transmitting);
+			update_transmitting_state(!transmitting);
+
+@rpc("authority", "call_remote")
+func update_transmitting_state(state: bool) -> void:
+	transmitting = state;
+	voice_output.transmitting = state;
 
 func _process(delta: float) -> void:
 	if is_multiplayer_authority():
@@ -94,7 +120,13 @@ func update(delta):
 	update_visuals(delta)
 	reciever_signal_strength = 0.0
 	find_signals()
-	static_player.volume_db = remap(reciever_signal_strength, 0.0, 1.0, static_volume, -50.0)
+	#static_player.volume_db = remap(reciever_signal_strength, 0.0, 1.0, static_volume, -50.0)
+	
+	#if not transmitting == peer_output.transmitting:
+		#peer_output.transmitting = transmitting;
+
+	#if not transmitting == peer_recorder.enabled:
+		#peer_recorder.enabled = transmitting;
 
 func find_signals():
 	for sig in get_tree().get_nodes_in_group("Signal Transmitter"):
@@ -108,9 +140,14 @@ func update_visuals(_delta):
 	var strength = reciever_signal_strength
 	oscilloscope_material.set_shader_parameter("frequency", (frequency) * 60);
 
-	strength_indicator_material.set_shader_parameter("albedo", gradient_strength.sample(strength));
-	strength_indicator_material.set_shader_parameter("emission", gradient_strength.sample(strength));
-	strength_indicator_material.set_shader_parameter("emission_energy", 1.0);
+	if transmitting:
+		strength_indicator_material.set_shader_parameter("albedo", Vector3(0, 0, 1));
+		strength_indicator_material.set_shader_parameter("albedo", Vector3(0, 0, 1));
+		strength_indicator_material.set_shader_parameter("emission_energy", 1.0);
+	else:
+		strength_indicator_material.set_shader_parameter("albedo", gradient_strength.sample(strength));
+		strength_indicator_material.set_shader_parameter("emission", gradient_strength.sample(strength));
+		strength_indicator_material.set_shader_parameter("emission_energy", 1.0);
 
 	spectrogram_material.set_shader_parameter("texture_albedo", spectrogram_texture);
 	spectrogram_material.set_shader_parameter("texture_emission", spectrogram_texture);
@@ -123,11 +160,20 @@ func update_visuals(_delta):
 func _update_client_visuals(strength: float, client_frequency: float) -> void:
 	oscilloscope_material.set_shader_parameter("frequency", (client_frequency) * 60);
 
-	strength_indicator_material.set_shader_parameter("albedo", gradient_strength.sample(strength));
-	strength_indicator_material.set_shader_parameter("emission", gradient_strength.sample(strength));
-	strength_indicator_material.set_shader_parameter("emission_energy", 1.0);
+	if transmitting:
+		strength_indicator_material.set_shader_parameter("albedo", Vector3(0, 0, 1));
+		strength_indicator_material.set_shader_parameter("albedo", Vector3(0, 0, 1));
+		strength_indicator_material.set_shader_parameter("emission_energy", 1.0);
+	else:
+		strength_indicator_material.set_shader_parameter("albedo", gradient_strength.sample(strength));
+		strength_indicator_material.set_shader_parameter("emission", gradient_strength.sample(strength));
+		strength_indicator_material.set_shader_parameter("emission_energy", 1.0);
 	
 	animation_tree.set("parameters/Frequency/blend_amount", client_frequency);
+
+	spectrogram_material.set_shader_parameter("texture_albedo", spectrogram_texture);
+	spectrogram_material.set_shader_parameter("texture_emission", spectrogram_texture);
+	#update_spectrogram()
 
 func update_spectrogram() -> void:
 	var height: float = spectrogram_img.get_height();

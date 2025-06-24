@@ -77,7 +77,7 @@ func _physics_process(delta) -> void:
 		else:
 			output_value = frequency_value * (1.0 - occlusion_amount * occlusion_multiplier);
 
-		if not target or is_nan(output_value):
+		if not target or is_nan(output_value) or not transmitting:
 			output_value = 0.0;
 
 		value = output_value;
@@ -140,6 +140,7 @@ func update_occlusion() -> void:
 		var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(global_position, target.global_position);
 		query.exclude = [target];
 		query.collision_mask = collision_mask;
+		query.hit_from_inside = true;
 		var collision: Dictionary = space_state.intersect_ray(query);
 
 		if collision:

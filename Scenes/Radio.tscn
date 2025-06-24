@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bfbo52ja45trm"]
+[gd_scene load_steps=18 format=3 uid="uid://bfbo52ja45trm"]
 
 [ext_resource type="Material" uid="uid://jg8biux0yggr" path="res://Assets/Materials/Radio/SpectrogramScreen.tres" id="1_mkopq"]
 [ext_resource type="Script" uid="uid://be6by06rcalrw" path="res://Scripts/Radio.gd" id="1_ncr3o"]
@@ -8,6 +8,8 @@
 [ext_resource type="ArrayMesh" uid="uid://comtjkfmxev05" path="res://Assets/Meshes/Radio.res" id="5_wquc3"]
 [ext_resource type="Material" uid="uid://bl0f07ep3r53s" path="res://Assets/Materials/Radio/StengthIndicator.tres" id="6_7f87o"]
 [ext_resource type="AnimationLibrary" uid="uid://bncvxfeu6ceoc" path="res://Assets/Animations/Radio.tres" id="6_wquc3"]
+[ext_resource type="PackedScene" uid="uid://vtknsoe72ndb" path="res://Scenes/VOIPManager.tscn" id="9_j1pi8"]
+[ext_resource type="Script" uid="uid://006ex5ya7l71" path="res://Scripts/SpatialTransmitter.gd" id="10_prkkb"]
 
 [sub_resource type="Skin" id="Skin_oa4le"]
 resource_name = "Skin"
@@ -41,6 +43,9 @@ node_connections = [&"Frequency", 0, &"RadioIdle", &"Frequency", 1, &"RadioMax",
 properties/0/path = NodePath("AnimationTree:parameters/Frequency/blend_amount")
 properties/0/spawn = true
 properties/0/replication_mode = 1
+
+[sub_resource type="AudioStreamGenerator" id="AudioStreamGenerator_j1pi8"]
+mix_rate_mode = 0
 
 [node name="Radio" type="Node3D" node_paths=PackedStringArray("mesh", "animation_tree")]
 script = ExtResource("1_ncr3o")
@@ -87,3 +92,23 @@ parameters/Frequency/blend_amount = 0.0
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_7f87o")
+
+[node name="Voip Manager" parent="." node_paths=PackedStringArray("outputs") instance=ExtResource("9_j1pi8")]
+outputs = [NodePath("../Spatial Transmitter/Radio Peer Output")]
+bus_name = "Radio Input"
+microphone_input = false
+
+[node name="Spatial Transmitter" type="Node3D" parent="." node_paths=PackedStringArray("audio_player") groups=["Transmitter"]]
+script = ExtResource("10_prkkb")
+transmitting = true
+range_full = 15.0
+range_partial = 20.0
+audio_transmitter = true
+audio_player = NodePath("Radio Peer Output")
+smooth_occlusion = true
+metadata/_custom_type_script = "uid://006ex5ya7l71"
+
+[node name="Radio Peer Output" type="AudioStreamPlayer3D" parent="Spatial Transmitter"]
+stream = SubResource("AudioStreamGenerator_j1pi8")
+autoplay = true
+bus = &"Radio Output"

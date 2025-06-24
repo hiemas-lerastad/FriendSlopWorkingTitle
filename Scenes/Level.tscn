@@ -85,7 +85,7 @@ metadata/_custom_type_script = "uid://006ex5ya7l71"
 stream = ExtResource("2_kln2b")
 attenuation_model = 3
 autoplay = true
-bus = &"Radio"
+bus = &"Radio Input"
 
 [node name="Online Entities" type="Node" parent="."]
 
