@@ -13,6 +13,7 @@ radius = 0.2
 mix_rate_mode = 0
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_qbkls"]
+radius = 0.4
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rpqav"]
 radius = 0.7
@@ -70,6 +71,7 @@ stream = SubResource("AudioStreamGenerator_5ixxa")
 attenuation_model = 3
 max_db = 6.0
 autoplay = true
+bus = &"Radio Input"
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_qbkls")
