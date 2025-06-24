@@ -37,7 +37,6 @@ func _process(_delta: float) -> void:
 
 	if effect.can_get_buffer(buffer_size):
 		send_data.rpc(effect.get_buffer(buffer_size));
-		#send_data(effect.get_buffer(buffer_size));
 
 	effect.clear_buffer();
 	
