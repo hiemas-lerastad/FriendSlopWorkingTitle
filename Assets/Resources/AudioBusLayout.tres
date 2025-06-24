@@ -32,7 +32,6 @@ resource_name = "Capture"
 
 [resource]
 bus/0/volume_db = -5.04224
-bus/0/send = &"Radio Input"
 bus/1/name = &"Radio Effects"
 bus/1/solo = false
 bus/1/mute = false

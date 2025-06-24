@@ -64,8 +64,8 @@ func make_unique() -> void:
 			if material:
 				var new_material = material.duplicate();
 
-				if is_multiplayer_authority():
-					new_material.set_shader_parameter("foreground", true);
+				#if is_multiplayer_authority():
+					#new_material.set_shader_parameter("foreground", true);
 
 				match material:
 					oscilloscope_material:
