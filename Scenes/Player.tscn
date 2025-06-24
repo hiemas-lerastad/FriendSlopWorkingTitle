@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dj1428bukr0d6"]
+[gd_scene load_steps=11 format=3 uid="uid://dj1428bukr0d6"]
 
 [ext_resource type="Script" uid="uid://b77tvgwicnrxs" path="res://Scripts/Player.gd" id="1_rpqav"]
 [ext_resource type="PackedScene" uid="uid://bfbo52ja45trm" path="res://Scenes/Radio.tscn" id="2_kyqiw"]
@@ -6,12 +6,16 @@
 [ext_resource type="PackedScene" uid="uid://vtknsoe72ndb" path="res://Scenes/VOIPManager.tscn" id="4_dewec"]
 [ext_resource type="Script" uid="uid://006ex5ya7l71" path="res://Scripts/SpatialTransmitter.gd" id="5_5ixxa"]
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_5ixxa"]
+radius = 0.2
+
 [sub_resource type="AudioStreamGenerator" id="AudioStreamGenerator_5ixxa"]
 mix_rate_mode = 0
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_qbkls"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rpqav"]
+radius = 0.7
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_kyqiw"]
 properties/0/path = NodePath(".:position")
@@ -29,20 +33,26 @@ collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_rpqav")
 pivot = NodePath("Pivot")
-held_item = NodePath("Pivot/Radio")
-camera = NodePath("Pivot/Camera3D")
+held_item = NodePath("Pivot/SpringArm3D/Radio")
+camera = NodePath("Pivot/First Person Camera")
 voip_manager = NodePath("Voip Manager")
 
 [node name="Pivot" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.463958, 0)
 
-[node name="Camera3D" type="Camera3D" parent="Pivot"]
+[node name="First Person Camera" type="Camera3D" parent="Pivot"]
+current = true
 
-[node name="Radio" parent="Pivot" node_paths=PackedStringArray("voice_output") instance=ExtResource("2_kyqiw")]
-transform = Transform3D(-0.00884871, 0, -0.999961, 0, 1, 0, 0.999961, 0, -0.00884871, -0.389325, 0, -1.19511)
+[node name="SpringArm3D" type="SpringArm3D" parent="Pivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32966, 0, -0.362125)
+shape = SubResource("SphereShape3D_5ixxa")
+spring_length = -0.9
+
+[node name="Radio" parent="Pivot/SpringArm3D" node_paths=PackedStringArray("voice_output") instance=ExtResource("2_kyqiw")]
+transform = Transform3D(-0.00884871, 0, -0.999961, 0, 1, 0, 0.999961, 0, -0.00884871, 0, 0, 0)
 voice_output = NodePath("SpatialTransmitter2")
 
-[node name="SpatialTransmitter2" type="Node3D" parent="Pivot/Radio" node_paths=PackedStringArray("audio_player") groups=["Transmitter"]]
+[node name="SpatialTransmitter2" type="Node3D" parent="Pivot/SpringArm3D/Radio" node_paths=PackedStringArray("audio_player") groups=["Transmitter"]]
 transform = Transform3D(-0.00884871, 0, 0.999961, 0, 1, 0, -0.999961, 0, -0.00884871, 1.19162, -0.463958, -0.399885)
 script = ExtResource("5_5ixxa")
 range_full = 200.0
@@ -54,7 +64,7 @@ smooth_occlusion = true
 disable_debug_markers = false
 metadata/_custom_type_script = "uid://006ex5ya7l71"
 
-[node name="Radio Voice Player" type="AudioStreamPlayer3D" parent="Pivot/Radio/SpatialTransmitter2"]
+[node name="Radio Voice Player" type="AudioStreamPlayer3D" parent="Pivot/SpringArm3D/Radio/SpatialTransmitter2"]
 transform = Transform3D(-0.00884871, 0, -0.999961, 0, 1, 0, 0.999961, 0, -0.00884871, -0.389325, 0.463958, -1.19511)
 stream = SubResource("AudioStreamGenerator_5ixxa")
 attenuation_model = 3
@@ -75,7 +85,7 @@ script = ExtResource("3_gntrk")
 metadata/_custom_type_script = "uid://bnseld6uo4gui"
 
 [node name="Voip Manager" parent="." node_paths=PackedStringArray("outputs") instance=ExtResource("4_dewec")]
-outputs = [NodePath("../SpatialTransmitter/AudioStreamPlayer3D"), NodePath("../Pivot/Radio/SpatialTransmitter2/Radio Voice Player")]
+outputs = [NodePath("../SpatialTransmitter/AudioStreamPlayer3D"), NodePath("../Pivot/SpringArm3D/Radio/SpatialTransmitter2/Radio Voice Player")]
 
 [node name="SpatialTransmitter" type="Node3D" parent="." node_paths=PackedStringArray("audio_player") groups=["Transmitter"]]
 script = ExtResource("5_5ixxa")
