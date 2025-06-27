@@ -1,0 +1,26 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://dlajihvp3u5fm"]
+
+[ext_resource type="Shader" uid="uid://dwp4512c5btms" path="res://Assets/Shaders/ForegoundStandardMaterial.gdshader" id="1_i01nn"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_dwmo4"]
+frequency = 0.8591
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_22onb"]
+noise = SubResource("FastNoiseLite_dwmo4")
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_i01nn")
+shader_parameter/albedo = Color(0.77013, 0.473747, 0.288321, 1)
+shader_parameter/texture_albedo = SubResource("NoiseTexture2D_22onb")
+shader_parameter/point_size = 0.0
+shader_parameter/roughness = 0.0
+shader_parameter/metallic_texture_channel = Vector4(0, 0, 0, 0)
+shader_parameter/specular = 0.0
+shader_parameter/metallic = 0.0
+shader_parameter/uv1_scale = Vector3(0, 0, 0)
+shader_parameter/uv1_offset = Vector3(0, 0, 0)
+shader_parameter/uv2_scale = Vector3(0, 0, 0)
+shader_parameter/uv2_offset = Vector3(0, 0, 0)
+shader_parameter/FOV = 75.0
+shader_parameter/foreground = false

@@ -15,10 +15,6 @@ radius = 0.1
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_qbkls"]
 radius = 0.4
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rpqav"]
-radius = 0.7
-height = 2.1
-
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_kyqiw"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
@@ -29,6 +25,10 @@ properties/1/replication_mode = 1
 properties/2/path = NodePath("Pivot:rotation")
 properties/2/spawn = true
 properties/2/replication_mode = 1
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_rpqav"]
+radius = 0.7
+height = 2.1
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_5ixxa"]
 size = Vector3(0.8, 1.5, 0.5)
@@ -44,9 +44,9 @@ voip_manager = NodePath("Voip Manager")
 
 [node name="Radio" parent="." node_paths=PackedStringArray("voice_output") instance=ExtResource("2_kyqiw")]
 transform = Transform3D(-0.0176974, 0, -1.99992, 0, 2, 0, 1.99992, 0, -0.0176974, -0.0185471, 0.463958, 0.434567)
-voice_output = NodePath("SpatialTransmitter2")
+voice_output = NodePath("Radio Voice Transmitter")
 
-[node name="SpatialTransmitter2" type="Node3D" parent="Radio" node_paths=PackedStringArray("audio_player") groups=["Transmitter"]]
+[node name="Radio Voice Transmitter" type="Node3D" parent="Radio" node_paths=PackedStringArray("audio_player") groups=["Transmitter"]]
 transform = Transform3D(-0.00884871, 0, 0.999961, 0, 1, 0, -0.999961, 0, -0.00884871, 1.19162, -0.463958, -0.399885)
 script = ExtResource("5_5ixxa")
 range_full = 200.0
@@ -58,7 +58,7 @@ smooth_occlusion = true
 disable_debug_markers = false
 metadata/_custom_type_script = "uid://006ex5ya7l71"
 
-[node name="Radio Voice Player" type="AudioStreamPlayer3D" parent="Radio/SpatialTransmitter2"]
+[node name="Radio Voice Player" type="AudioStreamPlayer3D" parent="Radio/Radio Voice Transmitter"]
 transform = Transform3D(-0.00884871, 0, -0.999961, 0, 1, 0, 0.999961, 0, -0.00884871, -0.389325, 0.463958, -1.19511)
 stream = SubResource("AudioStreamGenerator_5ixxa")
 attenuation_model = 3
@@ -75,15 +75,10 @@ shape = SubResource("SphereShape3D_5ixxa")
 spring_length = 2.5
 
 [node name="Third Person Camera" type="Camera3D" parent="Pivot/SpringArm3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 current = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_qbkls")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.042348, 0)
-shape = SubResource("CapsuleShape3D_rpqav")
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_kyqiw")
@@ -93,23 +88,27 @@ script = ExtResource("3_gntrk")
 metadata/_custom_type_script = "uid://bnseld6uo4gui"
 
 [node name="Voip Manager" parent="." node_paths=PackedStringArray("outputs") instance=ExtResource("4_dewec")]
-outputs = [NodePath("../SpatialTransmitter/AudioStreamPlayer3D"), NodePath("../Radio/SpatialTransmitter2/Radio Voice Player")]
+outputs = [NodePath("Voice Transmitter/Voice Player"), NodePath("../Radio/Radio Voice Transmitter/Radio Voice Player")]
 
-[node name="SpatialTransmitter" type="Node3D" parent="." node_paths=PackedStringArray("audio_player") groups=["Transmitter"]]
+[node name="Voice Transmitter" type="Node3D" parent="Voip Manager" node_paths=PackedStringArray("audio_player") groups=["Transmitter"]]
 script = ExtResource("5_5ixxa")
 transmitting = true
 range_full = 15.0
 range_partial = 20.0
 audio_transmitter = true
-audio_player = NodePath("AudioStreamPlayer3D")
+audio_player = NodePath("Voice Player")
 smooth_occlusion = true
 metadata/_custom_type_script = "uid://006ex5ya7l71"
 
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="SpatialTransmitter"]
+[node name="Voice Player" type="AudioStreamPlayer3D" parent="Voip Manager/Voice Transmitter"]
 stream = SubResource("AudioStreamGenerator_5ixxa")
 volume_db = 5.0
 autoplay = true
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+[node name="Player Collisionm Shape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.042348, 0)
+shape = SubResource("CapsuleShape3D_rpqav")
+
+[node name="Backpack Collision Shape" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.727407, 0.548745)
 shape = SubResource("BoxShape3D_5ixxa")

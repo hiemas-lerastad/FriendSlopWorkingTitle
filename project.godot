@@ -24,6 +24,10 @@ driver/enable_input=true
 
 Debug="*res://Scripts/Utility/Debug.gd"
 
+[debug]
+
+settings/stdout/print_fps=true
+
 [file_customization]
 
 folder_colors={
